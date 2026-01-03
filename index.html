@@ -4,12 +4,274 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>JavaScript30 | PriyankaGupta</title>
+    <style>
+      :root {
+        --background: #080808;
+        --color: #e3e3e3;
+        --accent: #ffd300;
+        --theme: #fde469;
+        --glow: rgba(88, 166, 255, 0.4);
+        --muted: #8b949e;
+        --border: #30363d;
+        --fontMono: monospace;
+        --grid-color: #ffd300;
+        --grid-size: 50px;
+        --perspective: 1000px;
+        --rotation-strength: 20deg;
+      }
+
+      * {
+        margin: 0%;
+        padding: 0%;
+        box-sizing: border-box;
+        color: inherit;
+        text-decoration: none;
+      }
+
+      body {
+        background: var(--background);
+        color: var(--color);
+        font-family: var(--fontMono);
+        line-height: 1.6;
+        overflow-x: hidden;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .noise-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 10000;
+        opacity: 0.05;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+      }
+
+      .grid-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: linear-gradient(
+            to right,
+            var(--grid-color) 1px,
+            transparent 1px
+          ),
+          linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
+        background-size: var(--grid-size) var(--grid-size);
+        background-position: center center;
+      }
+
+      .gradient-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          to bottom,
+          rgba(0, 0, 0, 0) 0%,
+          rgba(0, 0, 0, 0.5) 30%,
+          rgba(0, 0, 0, 1) 50%,
+          rgba(0, 0, 0, 1) 100%
+        );
+        pointer-events: none;
+      }
+
+      main {
+        position: relative;
+        z-index: 100;
+        width: 90%;
+        padding: 2rem 3rem;
+        display: flex;
+        align-items: center;
+      }
+
+      .hero {
+        flex: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+
+      .logo-container {
+        margin-bottom: 2rem;
+        display: inline-block;
+        position: relative;
+        perspective: var(--perspective);
+      }
+
+      .logo {
+        width: 100%;
+        height: 100%;
+        transition: transform 0.2s ease-out;
+        transform-style: preserve-3d;
+        cursor: pointer;
+      }
+
+      .logo img {
+        width: 14rem;
+        height: auto;
+        filter: drop-shadow(0 20px 30px rgba(0, 0, 0, 0.3));
+        transition: transform 0.3s ease;
+      }
+
+      .logo-container:hover .logo img {
+        transform: translateZ(50px);
+      }
+      .logo-container:hover .logo {
+        transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+      }
+
+      h1 {
+        font-size: 3rem;
+        margin-bottom: 1.5rem;
+        color: var(--color);
+        letter-spacing: -1px;
+        text-shadow: 0 0 20px var(--glow);
+      }
+
+      p {
+        font-size: 1.25rem;
+        color: var(--muted);
+        margin-bottom: 2.5rem;
+        max-width: 600px;
+      }
+
+      .links-container {
+        flex: 1;
+        background: var(--background);
+        border: 1px solid var(--border);
+        border-radius: 0.75rem;
+        padding: 1.5rem 2rem;
+        -webkit-backdrop-filter: blur(8px);
+        backdrop-filter: blur(8px);
+        margin-top: 1rem;
+        height: max-content;
+      }
+
+      .links-container h3 {
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        margin-bottom: 1.5rem;
+        color: var(--accent);
+      }
+
+      .links {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      a {
+        text-decoration: none;
+        color: var(--color);
+        font-size: 1.15rem;
+        font-weight: 700;
+        padding: 1rem;
+        border: 1px solid var(--border);
+        border-radius: 0.5rem;
+        transition: all 0.3s ease;
+        display: block;
+      }
+
+      a:hover {
+        background: var(--accent);
+        color: var(--background);
+        border-color: var(--accent);
+        transform: translateY(-2px);
+        box-sizing: 0 5px 15px var(--glow);
+      }
+
+      a span {
+        font-weight: 400;
+        opacity: 0.7;
+        font-size: 0.9rem;
+      }
+    </style>
   </head>
+
   <body>
-    <h1>JavaScript30</h1>
-    <p>
-      Taking the JavaScript30 day challenge to solve 30 questions from LeetCode
-      specifically designed to strengthen JavaScript.
-    </p>
+    <div class="noise-overlay"></div>
+    <div class="grid-container"></div>
+    <div class="gradient-overlay"></div>
+
+    <main class="container">
+      <div class="hero">
+        <div class="logo-container">
+          <div class="logo">
+            <img src="logo.png" alt="JavaScript30 logo" />
+          </div>
+        </div>
+        <h1>JavaScript30</h1>
+        <p>
+          Taking the JavaScript30 day challenge to solve 30 questions from
+          LeetCode specifically designed to strengthen JavaScript.
+        </p>
+        <p></p>
+      </div>
+
+      <div class="links-container">
+        <h3>Other Links</h3>
+        <div class="links">
+          <a
+            rel="noopener"
+            href="https://github.com/prynkagupta/JavaScript30"
+            target="_blank"
+          >
+            Give this Repo a <span>★</span>
+          </a>
+          <a rel="noopener" href="https://priyankaa.me/" target="_blank">
+            Checkout my other works <span>→</span>
+          </a>
+          <a
+            rel="noopener"
+            href="https://leetcode.com/studyplan/30-days-of-javascript/"
+            target="_blank"
+          >
+            Take on the JavaScript30 <span>↗</span>
+          </a>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      const container = document.querySelector(".logo-container");
+      const card = document.querySelector(".logo");
+
+      container.addEventListener("mousemove", (e) => {
+        const rect = container.getBoundingClientRect();
+
+        // Calculate mouse position relative to center of the image
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+
+        // Calculate rotation (inverted for natural tilt)
+        const rotateX = ((y - centerY) / centerY) * -20; // Max 20deg tilt
+        const rotateY = ((x - centerX) / centerX) * 20;
+
+        card.style.setProperty("--rx", `${rotateX}deg`);
+        card.style.setProperty("--ry", `${rotateY}deg`);
+      });
+
+      // Reset position when mouse leaves
+      container.addEventListener("mouseleave", () => {
+        card.style.setProperty("--rx", "0deg");
+        card.style.setProperty("--ry", "0deg");
+      });
+    </script>
   </body>
 </html>
