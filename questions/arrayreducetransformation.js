@@ -1,4 +1,4 @@
-//Q-02/30 2629. Function Composition
+//Q-07/30 2629. Function Composition
 /*
 Given an array of functions [f1, f2, f3, ..., fn], return a new function fn that is the function composition of the array of functions.
 
