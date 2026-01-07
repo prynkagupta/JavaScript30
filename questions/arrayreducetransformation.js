@@ -9,7 +9,7 @@ The function composition of an empty list of functions is the identity function 
 You may assume each function in the array accepts one integer as input and returns one integer as output.
 */
 
-var reduce = function(nums, fn, init) {
+var reduce = function(nums,fn, init) {
     let val = init
     if(nums.length === 0){
         return init
